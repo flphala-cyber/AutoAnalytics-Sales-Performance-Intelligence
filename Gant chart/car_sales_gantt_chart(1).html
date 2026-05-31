@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Car Sales Performance – Gantt Chart</title>
+<link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Barlow:wght@400;500;600;700;900&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #ffffff;
+    font-family: 'Barlow', sans-serif;
+    padding: 32px 40px 48px;
+    min-width: 1100px;
+  }
+
+  /* ── TITLE BANNER ── */
+  .title-banner {
+    background: #3B5BDB;
+    border-radius: 8px;
+    text-align: center;
+    padding: 18px 40px;
+    margin-bottom: 28px;
+  }
+  .title-banner h1 {
+    font-family: 'Black Han Sans', sans-serif;
+    color: #ffffff;
+    font-size: 38px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .title-banner h1 span { color: #FFD43B; }
+
+  /* ── GANTT WRAPPER ── */
+  .gantt {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  /* ── HEADER ROW (dates) ── */
+  .gantt thead tr th {
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    padding: 8px 4px;
+    border: 2px solid #fff;
+    min-width: 78px;
+  }
+  .gantt thead tr th:first-child {
+    min-width: 210px;
+    background: #A9D18E;
+    color: #1a1a1a;
+    text-align: left;
+    padding-left: 12px;
+  }
+  /* Alternating orange / white columns */
+  .gantt thead tr th.col-orange {
+    background: #F5A623;
+    color: #1a1a1a;
+    text-transform: uppercase;
+  }
+  .gantt thead tr th.col-white {
+    background: #f0f0f0;
+    color: #555;
+    text-transform: uppercase;
+  }
+
+  /* ── BODY ROWS ── */
+  .gantt tbody tr td {
+    border: 1px solid #e8e8e8;
+    height: 44px;
+    vertical-align: middle;
+    padding: 0;
+  }
+  /* Label column */
+  .gantt tbody tr td.label {
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1a1a1a;
+    white-space: nowrap;
+    border-right: 2px solid #ddd;
+  }
+  /* Phase label rows */
+  .gantt tbody tr.phase-row td.label {
+    font-family: 'Barlow', sans-serif;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    border-radius: 0;
+  }
+  .phase-discovery td.label { background: #F5A623; color: #1a1a1a; }
+  .phase-processing td.label { background: #A9D18E; color: #1a1a1a; }
+  .phase-viz td.label       { background: #F5A623; color: #1a1a1a; }
+  .phase-present td.label   { background: #A9D18E; color: #1a1a1a; }
+
+  /* Cell that holds a bar */
+  .gantt tbody tr td.bar-cell {
+    position: relative;
+    background: #fff;
+  }
+  /* The bar itself */
+  .bar {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    height: 26px;
+    border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px; font-weight: 700;
+    letter-spacing: .5px;
+    color: #1a1a1a;
+    white-space: nowrap;
+  }
+  .bar-blue  { background: #3B5BDB; color: #fff; }
+  .bar-green { background: #A9D18E; color: #1a1a1a; }
+
+  /* Span helper – bar starts at left% and is width% of the total columns */
+  /* We use inline style for positioning */
+
+  /* ── STRIPE for even rows ── */
+  .gantt tbody tr:nth-child(even):not(.phase-row) td { background: #fafafa; }
+  .gantt tbody tr:nth-child(even):not(.phase-row) td.bar-cell { background: #fafafa; }
+
+  /* ── LEGEND ── */
+  .legend {
+    display: flex; align-items: center; gap: 24px;
+    margin-top: 24px; justify-content: flex-end;
+  }
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: #333; }
+  .legend-box { width: 28px; height: 16px; border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<!-- TITLE -->
+<div class="title-banner">
+  <h1>CAR SALES <span>PERFORMANCE</span> GANTT CHART</h1>
+</div>
+
+<!--
+  COLUMNS (12 date columns after the label col):
+  Apr 13 | Apr 15 | Apr 17 | Apr 19 | Apr 21 | Apr 23
+  Apr 25 | Apr 27 | Apr 29 | May 1  | May 5  | May 11
+  Each column ≈ 8.33% of bar-area width.
+-->
+
+<table class="gantt">
+  <thead>
+    <tr>
+      <th></th>
+      <th class="col-orange">APR<br>13</th>
+      <th class="col-white">APR<br>15</th>
+      <th class="col-orange">APR<br>17</th>
+      <th class="col-white">APR<br>19</th>
+      <th class="col-orange">APR<br>21</th>
+      <th class="col-white">APR<br>23</th>
+      <th class="col-orange">APR<br>25</th>
+      <th class="col-white">APR<br>27</th>
+      <th class="col-orange">APR<br>29</th>
+      <th class="col-white">MAY<br>1</th>
+      <th class="col-orange">MAY<br>5</th>
+      <th class="col-white">MAY<br>11</th>
+    </tr>
+  </thead>
+  <tbody>
+
+    <!-- ═══ PHASE 1: DATA DISCOVERY ═══ -->
+    <tr class="phase-row phase-discovery">
+      <td class="label">DATA DISCOVERY</td>
+      <!-- bar: cols 1–2 (Jan 6 – Jan 31) -->
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:1%;width:14%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Data Inspection</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:1%;width:14%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Analysis Planning</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:9%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Exploratory Data Analysis</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:9%;width:16%">DONE</div>
+      </td>
+    </tr>
+
+    <!-- ═══ PHASE 2: DATA PROCESSING ═══ -->
+    <tr class="phase-row phase-processing">
+      <td class="label">Data Processing</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:25%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Data Cleaning</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:33%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Feature Building &amp; Aggregation</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:33%;width:16%">DONE</div>
+      </td>
+    </tr>
+
+    <!-- ═══ PHASE 3: DATA VISUALIZATION ═══ -->
+    <tr class="phase-row phase-viz">
+      <td class="label">Data Visualization</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:41%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Analysis on Excel</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:50%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Monitoring Dashboard</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:41%;width:16%">DONE</div>
+      </td>
+    </tr>
+
+    <!-- ═══ PHASE 4: DATA PRESENTATION ═══ -->
+    <tr class="phase-row phase-present">
+      <td class="label">Data Presentation</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:58%;width:16%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Monitor PowerBI Daily Refresh</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-green" style="left:75%;width:22%">DONE</div>
+      </td>
+    </tr>
+    <tr>
+      <td class="label">Update New Products into Report</td>
+      <td class="bar-cell" colspan="12" style="position:relative">
+        <div class="bar bar-blue" style="left:75%;width:22%">DONE</div>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item">
+    <div class="legend-box" style="background:#3B5BDB"></div> Primary Task
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#A9D18E"></div> Supporting Task
+  </div>
+  <div class="legend-item">
+    <div class="legend-box" style="background:#F5A623"></div> Phase Milestone
+  </div>
+</div>
+
+</body>
+</html>
